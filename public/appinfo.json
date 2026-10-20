@@ -1,0 +1,16 @@
+{
+  "id": "com.tb.weboslauncher",
+  "version": "0.1.0",
+  "vendor": "TB contributors",
+  "type": "web",
+  "main": "index.html",
+  "title": "TB",
+  "appDescription": "A retro home screen for LG webOS, with memory-card apps, HDMI inputs and original animated scenery.",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "iconColor": "#050505",
+  "bgColor": "#000000",
+  "resolution": "1920x1080",
+  "disableBackHistoryAPI": true,
+  "transparent": false
+}

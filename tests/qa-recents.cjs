@@ -1,0 +1,10 @@
+const fs=require('node:fs');const vm=require('node:vm');const assert=require('node:assert/strict');const esbuild=require('esbuild');
+const values=new Map();const box={module:{exports:{}},exports:{},localStorage:{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)}};box.exports=box.module.exports;vm.runInNewContext(esbuild.transformSync(fs.readFileSync('src/lib/recents.ts','utf8'),{loader:'ts',format:'cjs'}).code,box);const {loadRecents,saveRecents,rememberRecent,recentItems}=box.module.exports;const array=x=>Array.from(x);
+assert.deepEqual(array(loadRecents()),[]);values.set('frieren-last-used','youtube');assert.deepEqual(array(loadRecents()),['youtube']);
+values.set('frieren-recent-items',JSON.stringify(['netflix',null,'hdmi3','netflix',4,'' ]));assert.deepEqual(array(loadRecents()),['netflix','hdmi3']);
+const history=rememberRecent(['youtube','hdmi3','netflix'],'hdmi3');assert.deepEqual(array(history),['hdmi3','youtube','netflix']);saveRecents(history);assert.deepEqual(array(loadRecents()),array(history));
+const items=['youtube','crunchyroll','netflix','tvnz','hdmi1','hdmi2','hdmi3','hdmi4'].map(id=>({id}));const key=x=>x.id;
+assert.deepEqual(array(recentItems(items,history,key)).map(key),['hdmi3','youtube','netflix','crunchyroll','tvnz','hdmi1']);
+assert.deepEqual(array(recentItems(items,['uninstalled','hidden','hdmi4','tvnz','netflix','youtube','hdmi1'],key)).map(key),['hdmi4','tvnz','netflix','youtube','hdmi1','crunchyroll']);
+assert.deepEqual(array(recentItems([],history,key)),[]);assert.equal(rememberRecent(Array.from({length:40},(_,i)=>''+i),'new').length,32);
+console.log('Recents: migration, malformed values, de-duplication, persistence, mixed app/HDMI ordering, unavailable-item filtering, six-item limit, empty collection and history cap passed.');
