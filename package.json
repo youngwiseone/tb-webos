@@ -1,13 +1,13 @@
 {
   "name": "tb-webos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Retro home screen for LG webOS TVs",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "test": "node tests/qa-startup-greeting.cjs && node tests/qa-orbit.cjs && node tests/qa-recents.cjs && node tests/qa-startup-ready.cjs && node --test scripts/steam-relay.test.mjs",
+    "test": "node tests/qa-network.cjs && node tests/qa-startup-greeting.cjs && node tests/qa-orbit.cjs && node tests/qa-recents.cjs && node tests/qa-startup-ready.cjs && node --test scripts/steam-relay.test.mjs",
     "package": "node scripts/package.mjs",
     "manifest": "node scripts/gen-manifest.mjs"
   },

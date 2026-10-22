@@ -16,11 +16,12 @@ Inspired by [Gathin's TV project and @gathint's post](https://github.com/Gathin2
 - A handheld-style morning/afternoon/evening greeting or a tower-and-cloud startup. The rest of the home stays the same when switching startup styles.
 - Independent menu and startup audio settings. **Console recordings are not included; startup audio defaults off.**
 - Optional installed-app discovery and TV picture controls through an existing rooted Homebrew Channel installation.
+- An Internet page with connection status, IP/gateway/DNS and a shortcut to LG's native Wi-Fi/network settings. Network passwords stay in LG's interface.
 - Optional Steam friends through a separately run, authenticated PC relay. No Steam credentials ship in the app.
 
 ## Compatibility and test status
 
-Developed on an **LG OLED48C24LA**, firmware **23.25.55**, **webOS24 / SDK9.2.2**. The personal predecessor was installed and exercised on that TV, including remote navigation, apps/HDMI, Pinball discovery, picture settings and the idle view. This public **0.1.0** copy has a new app ID, neutral media and an explicit discovery switch. It is PC-build/browser tested and **has not yet been installed on the TV**. Other TVs and firmware are unverified.
+Developed on an **LG OLED48C24LA**, firmware **23.25.55**, **webOS24 / SDK9.2.2**. The personal implementation was installed and exercised on that TV, including remote navigation, apps/HDMI, Pinball discovery, picture settings, the idle view and the new live connection page/native Settings shortcut. This public **0.1.1** copy has a separate app ID, neutral media and explicit Homebrew opt-in. It is PC-build/browser tested and **has not yet been installed on the TV**. Other TVs and firmware are unverified. See [what changed since the original showcase submission](CHANGELOG.md).
 
 The bundle targets Chrome79 as a compatibility baseline and uses a classic script for webOS file loading. That does not establish support for every older webOS TV.
 
@@ -35,14 +36,14 @@ npm run build
 npm run package
 ```
 
-The resulting package is `build/com.tb.weboslauncher_0.1.0_all.ipk`. Packaging is separate from installation and does not contact any TV. `npm run dev` previews the app on the PC with mock apps/inputs; picture controls use mock values there.
+The resulting package is `build/com.tb.weboslauncher_0.1.1_all.ipk`. Packaging is separate from installation and does not contact any TV. `npm run dev` previews the app on the PC with mock apps/inputs; picture and Internet controls use sample values there.
 
 ## Install and navigation
 
 Install the built IPK with [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop) or LG's CLI and your own paired device profile:
 
 ```sh
-npx ares-install --device YOUR_TV build/com.tb.weboslauncher_0.1.0_all.ipk
+npx ares-install --device YOUR_TV build/com.tb.weboslauncher_0.1.1_all.ipk
 npx ares-launch --device YOUR_TV com.tb.weboslauncher
 ```
 
@@ -57,6 +58,16 @@ The app does **not** automatically replace Home, remap Settings, install root, c
 In Apps & inputs, **Homebrew: Off/On** opts into live installed-app discovery. Enable it only on your own rooted TV with Homebrew Channel. It runs fixed `listLaunchPoints` and validated icon-read commands through that service, retains known artwork and falls back to the catalogue when unavailable. App installation/uninstallation stays outside TB. New discoveries remain hidden until selected. Returning to TB, opening the chooser or selecting Refresh reads the list again.
 
 TV Settings uses Homebrew Channel for bounded, validated picture-setting queries/changes and readback, scoped to the active input/profile. Root access is powerful; this feature is optional, has no remote command endpoint, and is not a substitute for checking settings on your own firmware. Open All LG settings if unavailable. A Settings-button hook is not installed here.
+
+## Internet and Wi-Fi
+
+Open **Internet** to see Wi-Fi/Ethernet status, network name, IP address, gateway, subnet mask and DNS. Refresh reads them again; returning to this page also refreshes its values. An IP address does not necessarily mean the internet is reachable, so both states are shown. Failed reads clear old details.
+
+**Wi-Fi & network settings** opens LG Settings with General → Network selected; press OK to enter its network choices. LG handles choosing a network and entering its password. The route was checked on the development C2; other firmware may behave differently. A failed targeted launch falls back to All LG settings. TB does not read, store or submit network passwords.
+
+Connection details use a read-only local TV API. If that is unavailable, the Homebrew fallback runs only when **Homebrew: On** is enabled in Apps & inputs. Keep it off on an unrooted TV; the native Settings shortcut remains usable without it. Opening the network page does not scan for devices, contact an external IP service or expose a network server.
+
+![Internet page with synthetic connection details, PC preview](docs/internet.png)
 
 ## Startup audio and personal images
 
@@ -76,7 +87,7 @@ Phone mirroring is not implemented in TB. LG AirPlay/Miracast may be used separa
 
 ## Tests and limitations
 
-Local checks cover audio readiness/cancellation/cache, orbit bounds and recent-history ordering. Relay tests use synthetic accounts and API responses. Browser checks exercise the retro menu, startup choices, optional discovery control and picture-page fallback. Screenshots in `docs/` are PC previews, not photographs of a TV. Hardware testing of this public identity/assets remains pending; report your exact model/firmware in [issues](../../issues).
+Local checks cover audio readiness/cancellation/cache, orbit bounds, recent-history ordering and network status parsing, root opt-in and Settings fallback. Relay tests use synthetic accounts and API responses. Browser checks exercise the retro menu, startup choices, optional discovery control, picture-page fallback and Internet navigation/refresh/error states. Screenshots in `docs/` use neutral assets and synthetic state; they are PC previews, not photographs of a TV. Hardware testing of this public identity/assets remains pending; report your exact model/firmware in [issues](../../issues).
 
 The idle design reduces stationary display time, but it is not a guarantee against OLED burn-in. Keep the TV's own panel protections enabled. Root/debloat tools and the experimental power watcher from the personal setup are intentionally not distributed.
 

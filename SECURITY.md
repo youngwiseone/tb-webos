@@ -1,6 +1,6 @@
 # Security and local development
 
-The app does not expose a network server. Root discovery/picture features use an existing Homebrew Channel root service only after opt-in or an explicit picture-setting action. Do not load untrusted scripts in the app or expose root services/SSH to the internet.
+The app does not expose a network server. Root discovery/picture features use an existing Homebrew Channel root service only after opt-in or an explicit picture-setting action. The Internet page tries a read-only local status API; its fixed Homebrew fallback requires the existing Homebrew opt-in. It does not query passwords, scan devices or call an external IP service. Do not load untrusted scripts in the app or expose root services/SSH to the internet.
 
 The optional Steam relay accepts a bearer token and a fixed friends endpoint. Bind it only to loopback or the intended private interface and restrict its firewall to the TV. Never publish API keys, relay tokens, pairing files or configuration exports.
 
